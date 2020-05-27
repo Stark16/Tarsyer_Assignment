@@ -37,9 +37,9 @@ def main():
     xTrain = np.reshape(xTrain, (len(xTrain), 28, 28, 1))
     xTest = np.reshape(xTest, (len(xTest), 28, 28, 1))
 
-    Test_image = np.reshape(xTest[0], (28, 28))
-    plt.imshow(Test_image)
-    plt.show()
+    #Test_image = np.reshape(xTest[0], (28, 28))
+    #plt.imshow(Test_image)
+    #plt.show()
 
     print(xTest[0].shape)
 
@@ -54,7 +54,31 @@ def main():
 
 
     print(classifier.summary())
-    predictions = classifier.predict(xTest)
-    print(np.argmax(predictions[0]))
+
+    noise_factor = 0.4
+    xTest_noisy = []
+    xTest_noisy = xTest + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=xTest.shape)
+    xTest_noisy = np.clip(xTest_noisy, 0., 1.)
+
+    prediction = classifier.predict(xTest_noisy)
+
+    for i in range(10):
+        print(np.argmax(prediction[i]))
+
+    plt.figure(figsize=(20, 1))
+    for i in range(10):
+        # display original
+        #ax = plt.subplot(2, 10, i + 1)
+        #plt.imshow(xTest_noisy[i].reshape(28, 28))
+        #plt.gray()
+        #ax.get_xaxis().set_visible(False)
+        #ax.get_yaxis().set_visible(False)
+
+        ax = plt.subplot(2, 10, i + 1)
+        plt.imshow(xTest[i].reshape(28, 28))
+        plt.gray()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+    plt.show()
 
 main()
