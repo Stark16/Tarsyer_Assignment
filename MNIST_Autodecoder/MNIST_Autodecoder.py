@@ -37,35 +37,33 @@ def main():
     Decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(X)
 
 
-    Auto_Encoder = Model(input_img, Decoded)
-    Auto_Encoder.compile(optimizer='adadelta', loss='binary_crossentropy', metrics=['accuracy'])
+    Auto_Encoder_Model = Model(input_img, Decoded)
+    Auto_Encoder_Model.compile(optimizer='adadelta', loss='binary_crossentropy')
 
-    history = Auto_Encoder.fit(xTrain_noisy, xTrain,
+    history = Auto_Encoder_Model.fit(xTrain_noisy, xTrain,
                                epochs=100,
                                batch_size=128,
                                shuffle=True,
                                validation_data=(xTest_noisy, xTest))
 
-    Auto_Encoder.save('./')
+    Auto_Encoder_Trained = Auto_Encoder_Model.to_json()
+
+    with open("Trained_Models/Auto_Encoder_Trained_Model.json", 'w') as json_model:
+        json_model.write(Auto_Encoder_Trained)
+    Auto_Encoder_Model.save_weights("Trained_Models/Auto_Encoder.h5")
+    json_model.close()
+    print("\n\t Auto_Encoder Model has been trained and Saved Successfully! ")
+    print("\tYou can Find Trained Models Under Trained_Model Directory")
 
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
-    plt.plot(history.history['accuracy'])
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.show()
 
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
-
-    Denoised_Img = Auto_Encoder.predict(xTest)
+    Denoised_Img = Auto_Encoder_Model.predict(xTest)
 
     plt.figure(figsize=(20, 2))
     for i in range(10):
@@ -83,35 +81,5 @@ def main():
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
         plt.show()
-
-    print("Press 1 to  show Images from Original Data-set")
-    print("Press 2 to see Gaussian Distribution based noise generated data-set")
-    print("Press 4 to Exit")
-    ch = int(input("Enter Your Choice:"))
-    
-    try:
-    
-        if ch == 1:
-            plt.figure(figsize=(20, 2))
-            for i in range(10):
-                ax = plt.subplot(1, 10, i + 1)
-                plt.imshow(xTest[i].reshape(28, 28))
-                plt.gray()
-                ax.get_xaxis().set_visible(False)
-                ax.get_yaxis().set_visible(False)
-                plt.show()
-
-        elif ch == 2:
-            plt.figure(figsize=(20, 2))
-            for i in range(10):
-                ax = plt.subplot(1, 10, i+1)
-                plt.imshow(xTest_noisy[i].reshape(28, 28))
-                plt.gray()
-                ax.get_xaxis().set_visible(False)
-                ax.get_yaxis().set_visible(False)
-            plt.show()
-
-    except:
-        print("Inavlid Input")
 
 main()
