@@ -1,13 +1,13 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from tensorflow.keras.layers import Input, Dense, MaxPooling2D, UpSampling2D, Conv2D
-from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, MaxPooling2D, UpSampling2D, Conv2D, Flatten, Concatenate
+from tensorflow.keras.models import Model, Sequential
 from keras.datasets import mnist
 
 
-def main():
 
-    (xTrain, _), (xTest, _) = mnist.load_data()
+def main():
+    (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
 
     xTrain = xTrain.astype('float32') / 255.
     xTest = xTest.astype('float32') / 255.
@@ -36,17 +36,43 @@ def main():
     X = UpSampling2D((2, 2))(X)
     Decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(X)
 
-
     Auto_Encoder_Model = Model(input_img, Decoded)
-    Auto_Encoder_Model.compile(optimizer='adadelta', loss='binary_crossentropy')
 
-    history = Auto_Encoder_Model.fit(xTrain_noisy, xTrain,
-                               epochs=100,
-                               batch_size=128,
-                               shuffle=True,
-                               validation_data=(xTest_noisy, xTest))
 
-    Auto_Encoder_Trained = Auto_Encoder_Model.to_json()
+
+    Cin = Input(shape=(28, 28, 1))
+    Flatten_layer = Flatten()
+    C = Flatten_layer(Cin)
+    C = Dense(128, activation='relu')(C)
+    C = Dense(128, activation='relu')(C)
+    C = Dense(10, activation='softmax')(C)
+
+    Classifier = Model(Cin, C)
+
+    combined = Concatenate(axis=1)
+    combined = combined([Decoded, Cin])
+
+    Final_Model = Dense(1, activation='softmax', name='output_layer')(combined)
+
+
+
+
+    #Classifier_Model = Model(input_img, final_Layer)
+    #Classifier_Model.compile(optimizer='adadelta',
+     #                  loss='binary_crossentropy',
+      #                 metrics=['accuracy']
+       #                )
+
+
+    # Auto_Encoder_Model.compile(optimizer='adadelta', loss='binary_crossentropy')
+
+    # history = Auto_Encoder_Model.fit(xTrain_noisy, xTrain,
+    #                          epochs=100,
+    #                         batch_size=128,
+    #                        shuffle=True,
+    #                       validation_data=(xTest_noisy, xTest))
+
+    '''Auto_Encoder_Trained = Auto_Encoder_Model.to_json()
 
     with open("Trained_Models/Auto_Encoder_Trained_Model.json", 'w') as json_model:
         json_model.write(Auto_Encoder_Trained)
@@ -80,6 +106,7 @@ def main():
         plt.gray()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
-        plt.show()
+        plt.show()'''
+
 
 main()
