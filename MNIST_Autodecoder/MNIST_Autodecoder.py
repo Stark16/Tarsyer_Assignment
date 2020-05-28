@@ -7,7 +7,6 @@ import os
 
 
 def main():
-
     (xTrain, _), (xTest, _) = mnist.load_data()
 
     xTrain = xTrain.astype('float32') / 255.
@@ -37,15 +36,14 @@ def main():
     X = UpSampling2D((2, 2))(X)
     Decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(X)
 
-
     Auto_Encoder_Model = Model(input_img, Decoded)
     Auto_Encoder_Model.compile(optimizer='adadelta', loss='binary_crossentropy')
 
     history = Auto_Encoder_Model.fit(xTrain_noisy, xTrain,
-                               epochs=100,
-                               batch_size=128,
-                               shuffle=True,
-                               validation_data=(xTest_noisy, xTest))
+                                     epochs=100,
+                                     batch_size=128,
+                                     shuffle=True,
+                                     validation_data=(xTest_noisy, xTest))
 
     Auto_Encoder_Trained = Auto_Encoder_Model.to_json()
 
@@ -85,5 +83,6 @@ def main():
 
 
 ch = int(input("Press 1 to Start Training, 2 to exit:"))
-if os.path.exists("./Trained_Models/Auto_Encoder_Trained_Model.json") and os.path.exists("./Trained_Models/Auto_Encoder.h5") == False or ch == 1:
+if os.path.exists("./Trained_Models/Auto_Encoder_Trained_Model.json") and os.path.exists(
+        "./Trained_Models/Auto_Encoder.h5") == False or ch == 1:
     main()
