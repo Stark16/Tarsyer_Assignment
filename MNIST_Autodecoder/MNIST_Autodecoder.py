@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from tensorflow.keras.layers import Input, Dense, MaxPooling2D, UpSampling2D, Conv2D
 from tensorflow.keras.models import Model
 from keras.datasets import mnist
+import os
 
 
 def main():
@@ -68,7 +69,7 @@ def main():
     plt.figure(figsize=(20, 2))
     for i in range(10):
         # display original
-        ax = plt.subplot(2, 10, i+1)
+
         plt.imshow(xTest_noisy[i].reshape(28, 28))
         plt.gray()
         ax.get_xaxis().set_visible(False)
@@ -83,4 +84,6 @@ def main():
         plt.show()
 
 
-main()
+ch = int(input("Press 1 to Start Training, 2 to exit:"))
+if os.path.exists("./Trained_Models/Auto_Encoder_Trained_Model.json") and os.path.exists("./Trained_Models/Auto_Encoder.h5") == False or ch == 1:
+    main()

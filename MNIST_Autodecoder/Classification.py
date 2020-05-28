@@ -5,10 +5,13 @@ from tensorflow.keras.utils import normalize
 from tensorflow.keras.models import model_from_json
 from matplotlib import pyplot as plt
 import numpy as np
+import os
+import MNIST_Autodecoder
 
 
 
 def main():
+
 
     model_file = open("Trained_Models/Auto_Encoder_Trained_Model.json", "r")
     model = model_file.read()
@@ -18,9 +21,16 @@ def main():
     Auto_Encoder.load_weights("Trained_Models/Auto_Encoder.h5")
     print("Auto_Encoder Model Loaded Successfully")
 
-    #print(Auto_Encoder.summary())
+    (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
+    xTrain = normalize(xTrain, axis=1)
+    xTest = normalize(xTest, axis=1)
+    xTrain = np.reshape(xTrain, (len(xTrain), 28, 28, 1))
+    xTest = np.reshape(xTest, (len(xTest), 28, 28, 1))
+
 
     classifier = Sequential()
+    # print(Auto_Encoder.summary())
+
     for layer in Auto_Encoder.layers:
         classifier.add(layer)
     for layer in classifier.layers:
@@ -31,29 +41,27 @@ def main():
     classifier.add(Dense(128, activation='relu'))
     classifier.add(Dense(10, activation='softmax'))
 
-    (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
-    xTrain = normalize(xTrain, axis=1)
-    xTest = normalize(xTest, axis=1)
-    xTrain = np.reshape(xTrain, (len(xTrain), 28, 28, 1))
-    xTest = np.reshape(xTest, (len(xTest), 28, 28, 1))
-
-    #Test_image = np.reshape(xTest[0], (28, 28))
-    #plt.imshow(Test_image)
-    #plt.show()
+    # Test_image = np.reshape(xTest[0], (28, 28))
+    # plt.imshow(Test_image)
+    # plt.show()
 
     print(xTest[0].shape)
 
-    classifier.compile(optimizer='adam',
-                       loss='sparse_categorical_crossentropy',
-                       metrics=['accuracy']
-                       )
-    classifier.fit(xTrain, yTrain,
-                   epochs=3,
-                   validation_split=.1
-                   )
+    if os.path.exists("./Trained_Models/Classifier_Model.h5") and os.path.exists("./Trained_Models/Classifier_Trained_Model.json") == False:
+
+        classifier.compile(optimizer='adam',
+                               loss='sparse_categorical_crossentropy',
+                               metrics=['accuracy']
+                               )
+        classifier.fit(xTrain, yTrain,
+                           epochs=3,
+                           validation_split=.1
+                           )
 
 
-    print(classifier.summary())
+        print(classifier.summary())
+
+    print("Model is trained. Now Testing with 10 images:")
 
     noise_factor = 0.4
     xTest_noisy = []
@@ -62,23 +70,16 @@ def main():
 
     prediction = classifier.predict(xTest_noisy)
 
-    for i in range(10):
-        print(np.argmax(prediction[i]))
+    print(np.argmax(prediction[0]))
 
-    plt.figure(figsize=(20, 1))
-    for i in range(10):
-        # display original
-        #ax = plt.subplot(2, 10, i + 1)
-        #plt.imshow(xTest_noisy[i].reshape(28, 28))
-        #plt.gray()
-        #ax.get_xaxis().set_visible(False)
-        #ax.get_yaxis().set_visible(False)
-
-        ax = plt.subplot(2, 10, i + 1)
-        plt.imshow(xTest[i].reshape(28, 28))
-        plt.gray()
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
+    plt.subplot(2, 1, 1)
+    plt.imshow(xTest_noisy[0].reshape(28, 28))
+    plt.subplot(2, 1, 2)
+    plt.imshow(xTest[0].reshape(28, 28))
     plt.show()
+
+
+
+
 
 main()
