@@ -4,18 +4,30 @@ import random
 from matplotlib import pyplot as plt
 import cv2
 import numpy as np
+import math
 
 def plot_diff(Char_data):
     difference = []
     x = []
     y = []
+    mean = 0
     for i in range(len(Char_data)):
         diff = abs(Char_data[0][1][1] - Char_data[i][1][1])
         difference.append([Char_data[i][0], diff])
-        x.append(Char_data[i][0])
+        mean += diff
+        x.append(i)
         y.append(diff)
     print(difference)
-    plt.scatter(x, y)
+    mean = mean/len(Char_data)
+    nm = 0
+    for i in range(len(difference)):
+        nm += (int(difference[i][1]) - mean) ** 2
+    sd = math.sqrt(nm/len(difference))
+    print("Mean: {}, SD: {}".format(mean, sd))
+
+    plt.plot(x, y)
+    ax = plt.gca()
+    ax.set_ylim([0, 100])
     plt.show()
 
 
