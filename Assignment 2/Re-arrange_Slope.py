@@ -69,12 +69,12 @@ def check_shape(Char_data, width, height):
 def Arrange(filename, Char_data, width, height, shape_code):
     final_sequence = []
 
-    if shape_code != 1:
+    if shape_code == 0:
         Char_data.sort(key=lambda x: x[:][1][0], reverse=False)
         for i in range(len(Char_data)):
             final_sequence.append(Char_data[i][0])
         final_sequence[:] = [''.join(final_sequence[:])]
-        print(final_sequence)
+        return final_sequence
     else:
         chars = []
         nums = []
@@ -129,8 +129,9 @@ def read_from_xml(filepath, filename):
     # print(Char_data)
     shape_code = check_shape(Char_data, width, height)
     print(shape_code)
-    Arrange(filename, Char_data, width, height, shape_code)
+    final_sequence = Arrange(filename, Char_data, width, height, shape_code)
 
+    print("The Correct sequence for license plate for file: {}, is: {}".format(filename, final_sequence))
 
 for file in os.listdir("./Char-detection"):
     if file[-3:] == 'xml':
