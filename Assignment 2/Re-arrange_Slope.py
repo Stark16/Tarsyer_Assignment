@@ -29,8 +29,8 @@ def check_shape(Char_data, width, height):
                 jumps += 1
         except:
             continue
-    print(x, y)
-    print(jumps)
+    #print(x, y)
+    #print(jumps)
 
     '''for i in range(len(Char_data)):
         try:
@@ -53,8 +53,7 @@ def check_shape(Char_data, width, height):
     return 1 if jumps >= 1 else 0
 
 
-
-def arrange_nums(nums, final_sequence):
+'''def arrange_nums(nums, final_sequence):
     # Sorting the sequence of numbers based on y values in ascending order:
     nums.sort(key=lambda x: x[1][1], reverse=False)
 
@@ -65,25 +64,32 @@ def arrange_nums(nums, final_sequence):
         final_sequence[2] = nums[1]
         final_sequence[3] = nums[0]
     # print(final_sequence)
+'''
 
+def Arrange(filename, Char_data, width, height, shape_code):
+    final_sequence = []
 
-def Arrange(filename, Char_data, final_sequence, width, height):
-    chars = []
-    nums = []
-    numberplate = []
+    if shape_code != 1:
+        Char_data.sort(key=lambda x: x[:][1][0], reverse=False)
+        for i in range(len(Char_data)):
+            final_sequence.append(Char_data[i][0])
+        final_sequence[:] = [''.join(final_sequence[:])]
+        print(final_sequence)
+    else:
+        chars = []
+        nums = []
+        for i in range(len(Char_data)):
 
-    for i in range(len(Char_data)):
+            if Char_data[i][0].isnumeric() == False:
+                chars.append(Char_data[i])
+            else:
+                nums.append(Char_data[i])
 
-        if Char_data[i][0].isnumeric() == False:
-            chars.append(Char_data[i])
-        else:
-            nums.append(Char_data[i])
+        # arrange_char(chars, final_sequence)
 
-    # arrange_char(chars, final_sequence)
+        # arrange_nums(nums, final_sequence)
 
-    arrange_nums(nums, final_sequence)
-
-    # print(chars)
+        # print(chars)
 
 
 def read_from_xml(filepath, filename):
@@ -95,7 +101,6 @@ def read_from_xml(filepath, filename):
     height = int(dim_obj.find('height').text)
 
     Char_data = []
-    final_sequence = [None] * 10
     for ob in objects:
         char = ob.find('name').text
 
@@ -118,10 +123,13 @@ def read_from_xml(filepath, filename):
         #    )
         #   )
     random.shuffle(Char_data)
+    final_sequence = []
+
 
     # print(Char_data)
     shape_code = check_shape(Char_data, width, height)
-    Arrange(filename, Char_data, final_sequence, width, height)
+    print(shape_code)
+    Arrange(filename, Char_data, width, height, shape_code)
 
 
 for file in os.listdir("./Char-detection"):
