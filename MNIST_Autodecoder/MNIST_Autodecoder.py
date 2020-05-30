@@ -84,5 +84,5 @@ def main():
 
 ch = int(input("Press 1 to Start Training, 2 to exit:"))
 if os.path.exists("./Trained_Models/Auto_Encoder_Trained_Model.json") and os.path.exists(
-        "./Trained_Models/Auto_Encoder.h5") == False or ch == 1:
+        "./Trained_Models/Auto_Encoder.h5") == False or ch ==1:
     main()
