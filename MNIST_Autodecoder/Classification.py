@@ -8,11 +8,12 @@ import numpy as np
 import os
 import MNIST_Autodecoder
 
-
+# This script concatenates the classifier layers to the auto encoder layers and then fine
+# tunes the entire network trains the classifier layers.
 
 def main():
 
-
+    # Loading the auto-encoder model:
     model_file = open("Trained_Models/Auto_Encoder_Trained_Model.json", "r")
     model = model_file.read()
     model_file.close()
@@ -27,6 +28,7 @@ def main():
     xTrain = np.reshape(xTrain, (len(xTrain), 28, 28, 1))
     xTest = np.reshape(xTest, (len(xTest), 28, 28, 1))
 
+    # Creating the classifying layers:
 
     classifier = Sequential()
     # print(Auto_Encoder.summary())
@@ -63,7 +65,7 @@ def main():
 
     print("Model is trained. Now Testing with 10 images:")
 
-    noise_factor = 0.4
+    noise_factor = 0.5
     xTest_noisy = []
     xTest_noisy = xTest + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=xTest.shape)
     xTest_noisy = np.clip(xTest_noisy, 0., 1.)

@@ -14,7 +14,7 @@ def main():
     xTrain = np.reshape(xTrain, (len(xTrain), 28, 28, 1))  # adapt this if using `channels_first` image data format
     xTest = np.reshape(xTest, (len(xTest), 28, 28, 1))  # adapt this if using `channels_first` image data format
 
-    noiseFactor = 0.4
+    noiseFactor = 0.5
     xTrain_noisy = xTrain + noiseFactor * np.random.normal(loc=0.0, scale=1.0, size=xTrain.shape)
     xTest_noisy = xTest + noiseFactor * np.random.normal(loc=0.0, scale=1.0, size=xTest.shape)
 
@@ -27,8 +27,6 @@ def main():
     X = MaxPooling2D((2, 2), padding='same')(X)
     X = Conv2D(32, (3, 3), activation='relu', padding='same')(X)
     Encoded = MaxPooling2D((2, 2), padding='same')(X)
-
-    # at this point the representation is (7, 7, 32)
 
     X = Conv2D(32, (3, 3), activation='relu', padding='same')(Encoded)
     X = UpSampling2D((2, 2))(X)
@@ -62,24 +60,25 @@ def main():
     plt.legend(['train', 'test'], loc='upper left')
     plt.show()
 
-    Denoised_Img = Auto_Encoder_Model.predict(xTest)
+    Denoised_Img = Auto_Encoder_Model.predict(xTest_noisy)
 
-    plt.figure(figsize=(20, 2))
+    plt.figure(figsize=(20, 4))
     for i in range(10):
         # display original
-
+        ax = plt.subplot(2, 10, i + 1)
         plt.imshow(xTest_noisy[i].reshape(28, 28))
         plt.gray()
+        ax = plt.gca()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
 
         # display reconstruction
-        ax = plt.subplot(2, 10, i + 10)
+        ax = plt.subplot(2, 10, i + 1 + 10)
         plt.imshow(Denoised_Img[i].reshape(28, 28))
         plt.gray()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
-        plt.show()
+    plt.show()
 
 
 ch = int(input("Press 1 to Start Training, 2 to exit:"))
