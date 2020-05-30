@@ -11,48 +11,28 @@ def check_shape(Char_data, width, height):
     jumps = 0
     x = []
     y = []
-    line1 = []
-    line2 = []
-    copy = Char_data
-    copy.sort(key=lambda x: x[:][1][1], reverse=True)
-    for i in range(len(Char_data)):
-        x.append(copy[i][1][0])
-        y.append(copy[i][1][1])
 
-    #x.sort(reverse=True)
-    #y.sort(reverse=True)
-    #print(copy)
-    #print(y)
+    for i in range(len(Char_data)):
+        x.append(Char_data[i][1][0])
+        y.append(Char_data[i][1][1])
+
+    x.sort(reverse=True)
+    y.sort(reverse=True)
     flag = 0
     for i in range(len(x)):
+
         try:
-            if x[i] <= x[i+1] and flag == 0:
-                line1.append(copy[i])
-                flag += 1
-            elif flag != 0:
-                line2.append(copy[i])
+            x1 = x[i]
+            x2 = x[i + 1]
+            y1 = y[i]
+            y2 = y[i + 1]
+            if abs(x2 - x1) <= abs(y2 - y1):
+                jumps += 1
         except:
             continue
-    #line1.append(line2[0])
-    print(line1)
-    print(line2)
-    #print(" ")
-    #print(x, y)
-    #print(jumps)
 
-    '''for i in range(len(Char_data)):
-        try:
-            x1 = (Char_data[i][1][0])
-            x.append(x1)
-            y1 = (Char_data[i][1][1])
-            y.append(y1)
-            x2 = (Char_data[i+1][1][0])
-            y2 = (Char_data[i+1][1][1])
-            if abs(x2 - x1) <= abs(y2 - y1):
-                    jumps += 1
-        except:
-            continue'''
-    plt.scatter(x, y)
+
+    plt.plot(x, y)
     ax = plt.gca()
     ax.set_ylim([0, height])
     ax.set_xlim([0, width])
@@ -84,14 +64,25 @@ def Arrange(filename, Char_data, width, height, shape_code):
         final_sequence[:] = [''.join(final_sequence[:])]
         return final_sequence
     else:
-        chars = []
-        nums = []
+        line1 = []
+        line2 = []
+        mean = 0
         for i in range(len(Char_data)):
+            mean += Char_data[i][1][1]
+        mean /= len(Char_data)
+        print(mean)
 
-            if Char_data[i][0].isnumeric() == False:
-                chars.append(Char_data[i])
-            else:
-                nums.append(Char_data[i])
+        for i in range(len(Char_data)):
+            line1.append(Char_data[i]) if Char_data[i][1][1] < mean else line2.append(Char_data[i])
+        line1.sort(key=lambda  x: x[:][1][0], reverse=False)
+        line2.sort(key=lambda x: x[:][1][0], reverse=False)
+
+        for i in range(len(line1)):
+            final_sequence.append(line1[i][0])
+        for i in range(len(line2)):
+            final_sequence.append((line2[i][0]))
+        final_sequence[:] = ["".join(final_sequence[:])]
+        return final_sequence
 
         # arrange_char(chars, final_sequence)
 
@@ -139,7 +130,7 @@ def read_from_xml(filepath, filename):
     print(shape_code)
     final_sequence = Arrange(filename, Char_data, width, height, shape_code)
 
-    #print("The Correct sequence for license plate for file: {}, is: {}".format(filename, final_sequence))
+    print("The Correct sequence for license plate for file: {}, is: {}".format(filename, final_sequence))
 
 for file in os.listdir("./Char-detection"):
     if file[-3:] == 'xml':
