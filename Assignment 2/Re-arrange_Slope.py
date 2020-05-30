@@ -14,13 +14,13 @@ def check_shape(Char_data, width, height):
     line1 = []
     line2 = []
     copy = Char_data
-    for i in range(len(Char_data)):
-        x.append(Char_data[i][1][0])
-        y.append(Char_data[i][1][1])
-
     copy.sort(key=lambda x: x[:][1][1], reverse=True)
-    x.sort(reverse=True)
-    y.sort(reverse=True)
+    for i in range(len(Char_data)):
+        x.append(copy[i][1][0])
+        y.append(copy[i][1][1])
+
+    #x.sort(reverse=True)
+    #y.sort(reverse=True)
     #print(copy)
     #print(y)
 
@@ -38,6 +38,7 @@ def check_shape(Char_data, width, height):
                 line2.append(copy[i])
         except:
             continue
+    #line1.append(line2[0])
     print(line1)
     print(line2)
     print(" ")
@@ -60,7 +61,7 @@ def check_shape(Char_data, width, height):
     ax = plt.gca()
     ax.set_ylim([0, height])
     ax.set_xlim([0, width])
-    #plt.show()
+    plt.show()
 
     return 1 if jumps >= 1 else 0
 
