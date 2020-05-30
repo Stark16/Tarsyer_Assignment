@@ -23,25 +23,20 @@ def check_shape(Char_data, width, height):
     #y.sort(reverse=True)
     #print(copy)
     #print(y)
-
+    flag = 0
     for i in range(len(x)):
         try:
-            x1 = (x[i])
-            y1 = (y[i])
-            x2 = (x[i+1])
-            y2 = (y[i+1])
-            if abs(x2 - x1) <= abs(y2 - y1):
-                jumps += 1
-            if jumps == 0:
+            if x[i] <= x[i+1] and flag == 0:
                 line1.append(copy[i])
-            else:
+                flag += 1
+            elif flag != 0:
                 line2.append(copy[i])
         except:
             continue
     #line1.append(line2[0])
     print(line1)
     print(line2)
-    print(" ")
+    #print(" ")
     #print(x, y)
     #print(jumps)
 
@@ -57,7 +52,7 @@ def check_shape(Char_data, width, height):
                     jumps += 1
         except:
             continue'''
-    plt.plot(x, y)
+    plt.scatter(x, y)
     ax = plt.gca()
     ax.set_ylim([0, height])
     ax.set_xlim([0, width])
