@@ -23,10 +23,18 @@ def main():
     print("Auto_Encoder Model Loaded Successfully")
 
     (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
-    xTrain = normalize(xTrain, axis=1)
-    xTest = normalize(xTest, axis=1)
+
+    xTrain = xTrain.astype('float32') / 255.
+    xTest = xTest.astype('float32') / 255.
     xTrain = np.reshape(xTrain, (len(xTrain), 28, 28, 1))
     xTest = np.reshape(xTest, (len(xTest), 28, 28, 1))
+
+    noiseFactor = 0.5
+    xTrain_noisy = xTrain + noiseFactor * np.random.normal(loc=0.0, scale=1.0, size=xTrain.shape)
+    xTest_noisy = xTest + noiseFactor * np.random.normal(loc=0.0, scale=1.0, size=xTest.shape)
+
+    xTrain_noisy = np.clip(xTrain_noisy, 0., 1.)
+    xTest_noisy = np.clip(xTest_noisy, 0., 1.)
 
     # Creating the classifying layers:
 
@@ -60,7 +68,7 @@ def main():
                                loss='sparse_categorical_crossentropy',
                                metrics=['accuracy']
                                )
-        history = classifier.fit(xTrain, yTrain,
+        history = classifier.fit(xTrain_noisy, yTrain,
                            epochs=3,
                            validation_split=.1
                            )
@@ -68,7 +76,7 @@ def main():
 
         with open("Trained_Models/Classifier_Trained_Model.json", 'w') as json_model:
             json_model.write(Classifier_model_trained)
-        Classifier_model_trained.save_weights("Trained_Models/Classifier.h5")
+        classifier.save_weights("Trained_Models/Classifier.h5")
         json_model.close()
         print("\n\t Classifier Model has been trained and Saved Successfully! ")
         print("\tYou can Find Trained Models Under Trained_Model Directory")
@@ -96,13 +104,14 @@ def main():
 
     prediction = classifier.predict(xTest_noisy)
 
-    print(np.argmax(prediction[0]))
+    for i in range(10):
+        print(np.argmax(prediction[i]))
 
-    plt.subplot(2, 1, 1)
-    plt.imshow(xTest_noisy[0].reshape(28, 28))
-    plt.subplot(2, 1, 2)
-    plt.imshow(xTest[0].reshape(28, 28))
-    plt.show()
+        plt.subplot(2, 1, 1)
+        plt.imshow(xTest_noisy[i].reshape(28, 28))
+        plt.subplot(2, 1, 2)
+        plt.imshow(xTest[i].reshape(28, 28))
+        plt.show()
 
 
 
