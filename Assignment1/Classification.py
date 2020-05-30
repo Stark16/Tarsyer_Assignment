@@ -6,7 +6,7 @@ from tensorflow.keras.models import model_from_json
 from matplotlib import pyplot as plt
 import numpy as np
 import os
-import MNIST_Autodecoder
+from Assignment1 import MNIST_Autodecoder
 
 # This script concatenates the classifier layers to the auto encoder layers and then fine
 # tunes the entire network trains the classifier layers.
@@ -49,21 +49,45 @@ def main():
 
     print(xTest[0].shape)
 
-    if os.path.exists("./Trained_Models/Classifier_Model.h5") and os.path.exists("./Trained_Models/Classifier_Trained_Model.json") == False:
+    # Now I check if classifier model is trained or not, if not the script trains it or else ask the user to decide if they
+    # wish to retrain the model.
+
+    ch = int(input("do you wish to retrain the Classification model? 1 for yes, 2 for no."))
+
+    if os.path.exists("./Trained_Models/Classifier_Model.h5") and os.path.exists("./Trained_Models/Classifier_Trained_Model.json") == False or ch == 1:
 
         classifier.compile(optimizer='adam',
                                loss='sparse_categorical_crossentropy',
                                metrics=['accuracy']
                                )
-        classifier.fit(xTrain, yTrain,
+        history = classifier.fit(xTrain, yTrain,
                            epochs=3,
                            validation_split=.1
                            )
+        Classifier_model_trained = classifier.to_json()
 
+        with open("Trained_Models/Classifier_Trained_Model.json", 'w') as json_model:
+            json_model.write(Classifier_model_trained)
+        Classifier_model_trained.save_weights("Trained_Models/Classifier.h5")
+        json_model.close()
+        print("\n\t Classifier Model has been trained and Saved Successfully! ")
+        print("\tYou can Find Trained Models Under Trained_Model Directory")
+
+        # Plotting curves:
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
 
         print(classifier.summary())
 
     print("Model is trained. Now Testing with 10 images:")
+
+    # I test the model by adding noise to the input image and then passing them through the entire network
+    # to see if it can classify them
 
     noise_factor = 0.5
     xTest_noisy = []
