@@ -11,13 +11,18 @@ def check_shape(Char_data, width, height):
     jumps = 0
     x = []
     y = []
-
+    line1 = []
+    line2 = []
+    copy = Char_data
     for i in range(len(Char_data)):
         x.append(Char_data[i][1][0])
         y.append(Char_data[i][1][1])
 
+    copy.sort(key=lambda x: x[:][1][1], reverse=True)
     x.sort(reverse=True)
     y.sort(reverse=True)
+    #print(copy)
+    #print(y)
 
     for i in range(len(x)):
         try:
@@ -27,8 +32,15 @@ def check_shape(Char_data, width, height):
             y2 = (y[i+1])
             if abs(x2 - x1) <= abs(y2 - y1):
                 jumps += 1
+            if jumps == 0:
+                line1.append(copy[i])
+            else:
+                line2.append(copy[i])
         except:
             continue
+    print(line1)
+    print(line2)
+    print(" ")
     #print(x, y)
     #print(jumps)
 
@@ -48,7 +60,7 @@ def check_shape(Char_data, width, height):
     ax = plt.gca()
     ax.set_ylim([0, height])
     ax.set_xlim([0, width])
-    plt.show()
+    #plt.show()
 
     return 1 if jumps >= 1 else 0
 
@@ -131,7 +143,7 @@ def read_from_xml(filepath, filename):
     print(shape_code)
     final_sequence = Arrange(filename, Char_data, width, height, shape_code)
 
-    print("The Correct sequence for license plate for file: {}, is: {}".format(filename, final_sequence))
+    #print("The Correct sequence for license plate for file: {}, is: {}".format(filename, final_sequence))
 
 for file in os.listdir("./Char-detection"):
     if file[-3:] == 'xml':
