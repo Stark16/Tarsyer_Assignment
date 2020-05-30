@@ -8,11 +8,11 @@ This Readmd File consists of all the required documentation of and information r
 
 Overview:
   1.  All the scripts are commented and user interface is avaialble for ease in evaluation.
-  2.  For Assignment 1, There are 2 scripts: 1.MNIST_Autoencoder and 2.Classifier.
+  2.  For Assignment 1, There are 2 scripts: 1.MNIST_Autoencoder and 2.Classification.
       The scripts are used for training 1.Autoencoder model, and 2.fine tuning the same model to add a classifier, respectively.
   3.  For evaluating assigment 1, Running the AutoEncoder script will train a Autoencoder model and in the end plot both
       the loss curves, while also saving the model and wieghts in the Trained_model directory.
-  4. Runnig the CLassifier script, will 1st check if the autoencoder model is trained or not, if trained it will import the same model
+  4. Runnig the CLassification.py script, will 1st check if the autoencoder model is trained or not, if trained it will import the same      model
      then it will check if classifier model is saved or not, if yes it will import that too and just run a test image through the entire      system. In order to test the fine tuning of the network. You can delete the classifer trained models and weights and the Classifer 
      script will train the netwrk again and display the plots after completing the training.
      
@@ -32,7 +32,7 @@ Overview:
     + Trained Model:
     |--Auto_Encoder.json: The trained Autoencoder model.
     |--Auto_Encoder.h5: The weights associated to the trained model Auto_Encoder
-    |--Classifier.json: The trained Classifier model.
+    |--Classifier_Trained.json: The trained Classifier model.
     |--Classifier.h5: The weights associated to the trained model Classifier
     
     + Classification.py: The python script the fine tunes the Auto-encoder Model.
